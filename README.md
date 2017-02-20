@@ -21,20 +21,6 @@ The goals / steps of this project are the following:
 
 
 ```python
-import cv2
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import matplotlib.gridspec as gridspec
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
-import glob
-import numpy as np
-from moviepy.editor import VideoFileClip
-%matplotlib inline
-```
-
-
-```python
 def showImage(image):
     plt.imshow(image); plt.axis('off'); plt.show();
     
@@ -67,10 +53,6 @@ def renderImages(images):
 ### Here I will consider the rubric points individually and describe how I addressed each point in my implementation. 
 
 ### Camera Calibration
-
-#### 1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
-
-The code for this step is contained in the first code cell of the IPython notebook located in "./examples/example.ipynb" (or in lines # through # of the file called `some_file.py`).  
 
 I start by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.  
 
@@ -134,7 +116,6 @@ showImages(undistorted_images)
 
 ### Pipeline (single images)
 
-#### 1. Provide an example of a distortion-corrected image.
 To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
 
 
@@ -159,9 +140,7 @@ showImage(cv2.undistort(plt.imread("roadImg.png"), mtx, dist, None, mtx))
 ![png](output_11_3.png)
 
 
-#### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
-I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at lines # through # in `another_file.py`).  Here's an example of my output for this step.  (note: this is not actually from one of the test images)
-
+I used a combination of color and gradient thresholds to generate a binary image.  Here's an example of my output for this step.  (note: this is not actually from one of the test images)
 
 ```python
 # Define a function that takes an image, gradient orientation,
@@ -289,9 +268,9 @@ plt.imsave("./output_images/step_1_undistorted.jpg", preprocessImage)
 ![png](output_15_3.png)
 
 
-#### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
+#### Perspecitve transform
 
-The code for my perspective transform is in a function called `warp()`, which appears in the 8th cell (directly under the **Lane Line Detection** header) in the file `Advanced Lane Line Detection.ipynb` IPython notebook.  The `warp()` function takes as inputs an image (`img`), as well as various parameters that help influence the source and destination points.  I originally hardcoded the solution, but found it was hard to tinker with, hence I opted for a solution similar to that presented in the P4 Youtube live Youtube Tutorial.
+My `warp()` function takes as inputs an image (`img`), as well as various parameters that help influence the source and destination points.  I originally hardcoded the solution, but found it was hard to tinker with, hence I opted for a solution similar to that presented in the P4 Youtube live Youtube Tutorial.
 
 This resulted in the following source and destination points:
 
@@ -349,7 +328,7 @@ plt.imsave("./output_images/step_2_perspective_transf.jpg", cv2.cvtColor(warped,
 ![png](output_18_0.png)
 
 
-#### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
+#### Lane Line Detection
 
 I detected lane lines from the warped image using a sliding-window-based tracking method (credit: Tutorial Video on P4 by Udacity).
 This involves firstly summing the vertical pixel values in the image and identifying the 2 peaks in the histogram, which should give an indication of the location of the lane lines.
@@ -577,9 +556,9 @@ plt.imsave("./output_images/step_4_result.jpg", result)
 ![png](output_38_0.png)
 
 
-#### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
+#### Radius of Curvature
 
-I did this in the last 10 lines of the fit_lanes method in my `Advanced Lane Lines Project.ipynb` notebook
+I calculated the radius of curvature in the last 10 lines of the fit_lanes method in my `Advanced Lane Lines Project.ipynb` notebook
 
 Firstly I fit a second order polynomial (curve) to the left lane. I then used this fitted curve to calculate the angle of the left lane line's curvature.
 <br><br>
@@ -646,7 +625,7 @@ if camera_lane_diff < 0:
     pos = "right"
 ```
 
-#### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
+#### The Result.
 
 I implemented this step in the last 10 lines of my code in `Advanced Lane Lines Project.ipynb` in the function `map_lane()`.  Here is an example of my result on a test image:
 
@@ -667,16 +646,12 @@ print(str(abs(round(camera_lane_diff, 3))) + 'm ' + pos + ' of center')
 
 ### Pipeline (video)
 
-#### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
-
 Here's a [link to my video result](./project_video_output.mp4)<br>
 Here's a [link to a video of the pipeline in action!](./project_video_output_show_pipeline.mp4)
 
 ---
 
 ### Discussion
-
-#### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
 This was a challenging project in the sense that there are so many parameters to tune, and tuning one parameter affects the rest of the pipeline as well. I spent way too much time tuning and playing with parameters, and ultimately had to follow the Udacity tutorial and redo the project from scratch with a more well thought-out approach.
 <br><br>
